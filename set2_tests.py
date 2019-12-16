@@ -1,4 +1,5 @@
 import base64
+import sys
 import unittest
 from random import randint
 
@@ -60,5 +61,15 @@ class TestSet2(unittest.TestCase):
         if 'oracle' not in self.tests:
             self.skipTest("external resource not available")
         expected = generate_bytes(randint(1, 5))
-        actual = encryption_oracle(expected)
+        (_, actual) = encryption_oracle(expected)
         self.assertLess(len(expected), len(actual))
+
+    def test_challenge11(self):
+        if 11 not in self.tests:
+            self.skipTest("external resource not available")
+        sys.setrecursionlimit(1500)  # due to recursive functions, which was probably not a good idea
+        for _ in range(1000):
+            data = bytes(b'\0' * 1024)
+            (expected, isecb) = encryption_oracle(data)
+            actual = "ecb" if isecb[32:48] == isecb[48:64] else "cbc"
+            self.assertEqual(expected, actual)

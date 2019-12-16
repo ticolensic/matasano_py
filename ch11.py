@@ -5,17 +5,17 @@ from ch09 import pkcs7_pad
 from ch10 import encrypt_cbc
 
 
-def encryption_oracle(data) -> bytes:
+def encryption_oracle(data) -> (str, bytes):
     key = generate_bytes()
     before = generate_bytes(randint(5, 10))
     after = generate_bytes(randint(5, 10))
-    data1 = before + data + after
-    data = pkcs7_pad(data1)
+    data = before + data + after
+    data = pkcs7_pad(data)
     if randint(1, 2) == 1:
         iv = generate_bytes()
-        output = encrypt_cbc(data, key, vector=iv)
+        output = ("cbc", encrypt_cbc(data, key, iv))
     else:
-        output = encrypt_aes_128_ecb(data, key)
+        output = ("ecb", encrypt_aes_128_ecb(data, key))
     return output
 
 
