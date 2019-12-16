@@ -1,12 +1,14 @@
 import base64
 import unittest
+from random import randint
 
 from ch01 import Base64, from_base64
 from ch10 import encrypt_cbc, decrypt_cbc
+from ch11 import generate_bytes, encryption_oracle
 
 
 class TestSet2(unittest.TestCase):
-    tests = [9, 10, 11, 12, 13, 14, 15, 16, "cbc"]
+    tests = [9, 10, 11, 12, 13, 14, 15, 16, "cbc", "oracle"]
 
     def test_challenge09(self):
         if 9 not in self.tests:
@@ -53,3 +55,10 @@ class TestSet2(unittest.TestCase):
         expected = b"I'm back and I'm ringin'"
 
         self.assertEqual(expected, actual[:len(expected)])
+
+    def test_oracle(self):
+        if 'oracle' not in self.tests:
+            self.skipTest("external resource not available")
+        expected = generate_bytes(randint(1, 5))
+        actual = encryption_oracle(expected)
+        self.assertLess(len(expected), len(actual))

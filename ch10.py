@@ -18,7 +18,7 @@ def encrypt_cbc(block: bytes, key: bytes, vector: bytes = b'\0' * 16, block_size
     return left_res + right_res
 
 
-# @with_continuations()
+@with_continuations()
 def decrypt_cbc(block: bytes, key: bytes, vector: bytes = None, block_size: int = 16, self=None) -> bytes:
     if not block:
         return b""
