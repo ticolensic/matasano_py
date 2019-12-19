@@ -1,21 +1,28 @@
 from random import randint
+from typing import Callable
 
 from ch07 import encrypt_aes_128_ecb
 from ch09 import pkcs7_pad
 from ch10 import encrypt_cbc
 
 
-def encryption_oracle(data) -> (str, bytes):
+def ecb_or_cbc(func: Callable[[bytes], bytes]):
+    data = bytes(b'\0' * 128)
+    test_data = func(data)
+    return True if test_data[32:48] == test_data[48:64] else False
+
+
+def encryption_oracle_ecb_cbc(data: bytes, is_ecb: bool) -> bytes:
     key = generate_bytes()
     before = generate_bytes(randint(5, 10))
     after = generate_bytes(randint(5, 10))
     data = before + data + after
     data = pkcs7_pad(data)
-    if randint(1, 2) == 1:
-        iv = generate_bytes()
-        output = ("cbc", encrypt_cbc(data, key, iv))
+    if is_ecb:
+        output = encrypt_aes_128_ecb(data, key)
     else:
-        output = ("ecb", encrypt_aes_128_ecb(data, key))
+        iv = generate_bytes()
+        output = encrypt_cbc(data, key, iv)
     return output
 
 

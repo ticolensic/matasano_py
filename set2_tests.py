@@ -5,7 +5,8 @@ from random import randint
 
 from ch01 import Base64, from_base64
 from ch10 import encrypt_cbc, decrypt_cbc
-from ch11 import generate_bytes, encryption_oracle
+from ch11 import generate_bytes, encryption_oracle_ecb_cbc, ecb_or_cbc
+from ch12 import crack_ecb_simple, encryption_oracle_ecb, unknown_string
 
 
 class TestSet2(unittest.TestCase):
@@ -61,7 +62,7 @@ class TestSet2(unittest.TestCase):
         if 'oracle' not in self.tests:
             self.skipTest("external resource not available")
         expected = generate_bytes(randint(1, 5))
-        (_, actual) = encryption_oracle(expected)
+        actual = encryption_oracle_ecb_cbc(expected, randint(1, 2) == 1)
         self.assertLess(len(expected), len(actual))
 
     def test_challenge11(self):
@@ -69,7 +70,13 @@ class TestSet2(unittest.TestCase):
             self.skipTest("external resource not available")
         sys.setrecursionlimit(1500)  # due to recursive functions, which was probably not a good idea
         for _ in range(1000):
-            data = bytes(b'\0' * 1024)
-            (expected, isecb) = encryption_oracle(data)
-            actual = "ecb" if isecb[32:48] == isecb[48:64] else "cbc"
+            expected = randint(1, 2) == 1
+            actual = ecb_or_cbc(lambda x: encryption_oracle_ecb_cbc(x, expected))
             self.assertEqual(expected, actual)
+
+    def test_challenge12(self):
+        if 12 not in self.tests:
+            self.skipTest("external resource not available")
+        expected = unknown_string
+        actual = crack_ecb_simple(encryption_oracle_ecb)
+        self.assertEqual(expected, actual[:len(expected)])
