@@ -27,7 +27,7 @@ def check_email(email: str) -> bool:
 
 
 def profile_for(email: str) -> str:
-    # This is not what is required in the excercise
+    # This is not what is required in the exercise
     # and frankly I don't yet know how to perform this
     # if not check_email(email):
     #     raise Exception("Email incorrect")
