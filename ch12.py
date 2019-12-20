@@ -10,14 +10,7 @@ unknown_string = from_base64(Base64("""Um9sbGluJyBpbiBteSA1LjAKV2l0aCBteSByYWctd
 aGFpciBjYW4gYmxvdwpUaGUgZ2lybGllcyBvbiBzdGFuZGJ5IHdhdmluZyBq
 dXN0IHRvIHNheSBoaQpEaWQgeW91IHN0b3A/IE5vLCBJIGp1c3QgZHJvdmUg
 YnkK"""))
-# unknown_string = b"You can use negative integers with the slicing operator for that. Here's an example using the " \
-#                  b"python CLI interpreter:"
-
 key = None
-
-
-# key = "ORAN GUTAN PROPAN BUTAN "
-# key = "ORANGUTAN PROPAN"
 
 
 def encryption_oracle_ecb(data: bytes) -> bytes:
@@ -28,14 +21,15 @@ def encryption_oracle_ecb(data: bytes) -> bytes:
     return encrypt_aes_128_ecb(data, key)
 
 
+# needs a rewrite
 def find_block_size(func: Callable[[bytes], bytes]):
-    # wrong function, however we can find keysize this way
-    # it tells max(keysize, blocksize) now
     return len(func(b"A"))
 
 
 def crack_ecb_simple(func: Callable[[bytes], bytes]) -> bytes:
-    block_size = 16
+    block_size = find_block_size(func)  # wrong
+    if not ecb_or_cbc(func):
+        raise Exception("This is not a ECB oracle")
     guess_size = len(func(b""))
     base_byte = b"A"
     answer = []
