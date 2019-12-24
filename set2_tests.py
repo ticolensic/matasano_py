@@ -8,6 +8,7 @@ from ch10 import encrypt_cbc, decrypt_cbc
 from ch11 import generate_bytes, encryption_oracle_ecb_cbc, ecb_or_cbc
 from ch12 import crack_ecb_simple, encryption_oracle_ecb, unknown_string
 from ch13 import kv_parse, check_email, kv_return, encrypt_profile, decrypt_profile, attack_profile
+from ch14 import crack_ecb_hard, encryption_oracle_ecb_hard
 
 
 class TestSet2(unittest.TestCase):
@@ -131,3 +132,11 @@ class TestSet2(unittest.TestCase):
         actual = attack_profile()
         actual = decrypt_profile(actual)
         self.assertEqual(expected, actual["role"])
+
+    def test_challenge14(self):
+        if 14 not in self.tests:
+            self.skipTest("external resource not available")
+        expected = unknown_string
+        actual = crack_ecb_hard(encryption_oracle_ecb_hard)
+        # actual = crack_ecb_hard(encryption_oracle_ecb)
+        self.assertEqual(expected, actual[:len(expected)])

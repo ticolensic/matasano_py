@@ -6,10 +6,10 @@ from ch09 import pkcs7_pad
 from ch10 import encrypt_cbc
 
 
-def ecb_or_cbc(func: Callable[[bytes], bytes]):
+def ecb_or_cbc(func: Callable[[bytes], bytes], base_size: int = 0):
     data = bytes(b'\0' * 128)
     test_data = func(data)
-    return True if test_data[32:48] == test_data[48:64] else False
+    return True if test_data[base_size + 32: base_size + 48] == test_data[base_size + 48: base_size + 64] else False
 
 
 def encryption_oracle_ecb_cbc(data: bytes, is_ecb: bool) -> bytes:
