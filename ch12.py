@@ -35,8 +35,6 @@ def crack_ecb_simple(func: Callable[[bytes], bytes], left_base_size: int = 0) ->
     if not ecb_or_cbc(func, base_offset):
         raise Exception("This is not a ECB oracle")
 
-    # we need to take lefter into account, because guessing will start with an even block
-    # actually no, smth like len() - base_offset_round, to make it even
     guess_data_size = len(func(lefter))
 
     zip_vars = (

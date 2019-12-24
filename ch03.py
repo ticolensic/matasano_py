@@ -32,7 +32,7 @@ def rate_english_v1(data: bytes) -> int:
 
 def rate_english_v2(data: bytes, pick_sample=3) -> int:
     """
-     find X most frequent characters in string and compare to etaoin. All spare are a minus.
+     find X most frequent characters in string and find_diff to etaoin. All spare are a minus.
     """
 
     mc = Counter(data).most_common(pick_sample)  # list of tuples
