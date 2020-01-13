@@ -3,18 +3,26 @@ import sys
 import unittest
 from random import randint
 
+from Crypto.Cipher import AES
+
 from ch01 import Base64, from_base64
-from ch10 import encrypt_cbc, decrypt_cbc
+from ch09 import pkcs7_pad
+from ch10 import encrypt_cbc, decrypt_cbc, strip_padding
 from ch11 import generate_bytes, encryption_oracle_ecb_cbc, ecb_or_cbc
 from ch12 import crack_ecb_simple, encryption_oracle_ecb, unknown_string
 from ch13 import kv_parse, check_email, kv_return, encrypt_profile, decrypt_profile, attack_profile
 from ch14 import crack_ecb_hard, encryption_oracle_ecb_hard
 from ch15 import pkcs7_validate
+from ch16 import encrypt_wrapper, check_admin, flip_bits, encrypt_cbc_fix, decrypt_cbc_fix, crack_admin
 
 
 class TestSet2(unittest.TestCase):
     main = [9, 10, 11, 12, 13, 14, 15, 16]
-    supplementary = ["cbc", "oracle", "kv", "email", "profile"]
+    supplementary = ["cbc", "oracle", "kv", "email", "profile", "pre16", "flip"]
+
+    # noinspection PyTypeChecker
+    # tests = supplementary
+
     # noinspection PyTypeChecker
     tests = main + supplementary
 
@@ -37,6 +45,23 @@ class TestSet2(unittest.TestCase):
         expected = b"8vSCtvqVqJ1nFiDO39gBfg=="
         key = b"YELLOW SUBMARINE"
         actual = base64.b64encode(encrypt_cbc(test, key))
+        self.assertEqual(expected, actual)
+
+    def test_cbc(self):
+        if "cbc" not in self.tests:
+            self.skipTest("external resource not available")
+        data = b"1234567890"
+        key = b"YELLOW SUBMARINE"
+        iv = 16 * b"\0"
+
+        cipher = AES.new(key, AES.MODE_CBC, iv)
+        expected = cipher.encrypt(pkcs7_pad(data, AES.block_size))
+        actual = encrypt_cbc(data, key, iv)
+        self.assertEqual(expected, actual)
+
+        cipher = AES.new(key, AES.MODE_CBC, iv)
+        expected = strip_padding(cipher.decrypt(expected))
+        actual = decrypt_cbc(actual, key, iv)
         self.assertEqual(expected, actual)
 
     def test_decrypt_cbc(self):
@@ -158,3 +183,35 @@ class TestSet2(unittest.TestCase):
         test = b"ICE ICE BABY\x01\x02\x03\x04"
         actual = pkcs7_validate(test)
         self.assertEqual(expected, actual)
+
+    def test_ch16_mint(self):
+        if "pre16" not in self.tests:
+            self.skipTest("external resource not available")
+
+        userData = b";admin=true;"
+        enc = encrypt_wrapper(userData)
+        isAdmin = check_admin(enc)
+        self.assertFalse(isAdmin)
+
+    def test_ch16_flip(self):
+        if "flip" not in self.tests:
+            self.skipTest("external resource not available")
+        expected = b"MARSHALL Qg3!"
+        temp = encrypt_cbc_fix(b"B" * 16 + b"A" * 48)
+
+        flipped = flip_bits(temp, expected, 18)
+        actual = decrypt_cbc_fix(flipped)
+        self.assertIn(expected, actual)
+
+    def test_ch16_flip_exception(self):
+        if "flip" not in self.tests:
+            self.skipTest("external resource not available")
+        self.assertRaises(Exception, flip_bits, b"A" * 32, b"A" * 7, 30)
+        self.assertRaises(Exception, flip_bits, b"A" * 32, b"A" * 7, 10)
+
+    def test_challenge16(self):
+        if 16 not in self.tests:
+            self.skipTest("external resource not available")
+        temp = crack_admin()
+        actual = check_admin(temp)
+        self.assertTrue(actual)

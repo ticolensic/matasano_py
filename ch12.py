@@ -38,8 +38,8 @@ def crack_ecb_simple(func: Callable[[bytes], bytes], left_base_size: int = 0) ->
     guess_data_size = len(func(lefter))
 
     zip_vars = (
-        (x // block_size,
-         block_size - x % block_size - 1)
+        (x // block_size,  # distance
+         block_size - x % block_size - 1)  # padding_size
         for x in range(guess_data_size)
     )
     for distance, padding_size in zip_vars:
