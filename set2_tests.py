@@ -29,7 +29,7 @@ class TestSet2(unittest.TestCase):
 
     def test_challenge09(self):
         if 9 not in self.tests:
-            self.skipTest("external resource not available")
+            self.skipTest("")
 
         from ch09 import pkcs7_pad
 
@@ -40,7 +40,7 @@ class TestSet2(unittest.TestCase):
 
     def test_encrypt_cbc(self):
         if "cbc" not in self.tests:
-            self.skipTest("external resource not available")
+            self.skipTest("")
 
         test = b"1234567890"
         expected = b"8vSCtvqVqJ1nFiDO39gBfg=="
@@ -50,7 +50,7 @@ class TestSet2(unittest.TestCase):
 
     def test_cbc(self):
         if "cbc" not in self.tests:
-            self.skipTest("external resource not available")
+            self.skipTest("")
         data = b"1234567890"
         key = b"YELLOW SUBMARINE"
         iv = 16 * b"\0"
@@ -67,7 +67,7 @@ class TestSet2(unittest.TestCase):
 
     def test_decrypt_cbc(self):
         if "cbc" not in self.tests:
-            self.skipTest("external resource not available")
+            self.skipTest("")
 
         expected = b"1234567890"
         test = base64.b64decode(b"8vSCtvqVqJ1nFiDO39gBfg==")
@@ -77,7 +77,7 @@ class TestSet2(unittest.TestCase):
 
     def test_challenge10(self):
         if 10 not in self.tests:
-            self.skipTest("external resource not available")
+            self.skipTest("")
 
         key = b"YELLOW SUBMARINE"
 
@@ -92,14 +92,14 @@ class TestSet2(unittest.TestCase):
 
     def test_oracle(self):
         if 'oracle' not in self.tests:
-            self.skipTest("external resource not available")
+            self.skipTest("")
         expected = generate_bytes(randint(1, 5))
         actual = encryption_oracle_ecb_cbc(expected, randint(1, 2) == 1)
         self.assertLess(len(expected), len(actual))
 
     def test_challenge11(self):
         if 11 not in self.tests:
-            self.skipTest("external resource not available")
+            self.skipTest("")
         sys.setrecursionlimit(1500)  # due to recursive functions, which was probably not a good idea
         for _ in range(1000):
             expected = randint(1, 2) == 1
@@ -108,14 +108,14 @@ class TestSet2(unittest.TestCase):
 
     def test_challenge12(self):
         if 12 not in self.tests:
-            self.skipTest("external resource not available")
+            self.skipTest("")
         expected = unknown_string
         actual = crack_ecb_simple(encryption_oracle_ecb)
         self.assertEqual(expected, actual[:len(expected)])
 
     def test_kv(self):
         if 'kv' not in self.tests:
-            self.skipTest("external resource not available")
+            self.skipTest("")
         expected = {'foo': 'bar', 'baz': 'qux', 'zap': 'zazzle'}
         actual = kv_parse("foo=bar&baz=qux&zap=zazzle")
         self.assertEqual(expected, actual)
@@ -126,7 +126,7 @@ class TestSet2(unittest.TestCase):
 
     def test_check_email(self):
         if 'email' not in self.tests:
-            self.skipTest("external resource not available")
+            self.skipTest("")
 
         actual = check_email("foo@bar.com")
         expected = True
@@ -146,7 +146,7 @@ class TestSet2(unittest.TestCase):
 
     def test_profile(self):
         if 'profile' not in self.tests:
-            self.skipTest("external resource not available")
+            self.skipTest("")
         expected = "foo@bar.com"
         actual = encrypt_profile(expected)
         actual = decrypt_profile(actual)["email"]
@@ -154,7 +154,7 @@ class TestSet2(unittest.TestCase):
 
     def test_challenge13(self):
         if 13 not in self.tests:
-            self.skipTest("external resource not available")
+            self.skipTest("")
         expected = "admin"
         actual = attack_profile()
         actual = decrypt_profile(actual)
@@ -162,14 +162,14 @@ class TestSet2(unittest.TestCase):
 
     def test_challenge14(self):
         if 14 not in self.tests:
-            self.skipTest("external resource not available")
+            self.skipTest("")
         expected = unknown_string
         actual = crack_ecb_hard(encryption_oracle_ecb_hard)
         self.assertEqual(expected, actual[:len(expected)])
 
     def test_challenge15(self):
         if 15 not in self.tests:
-            self.skipTest("external resource not available")
+            self.skipTest("")
         expected = True
         test = b"ICE ICE BABY\x04\x04\x04\x04"
         actual = pkcs7_validate(test)
@@ -187,7 +187,7 @@ class TestSet2(unittest.TestCase):
 
     def test_ch16_mint(self):
         if "pre16" not in self.tests:
-            self.skipTest("external resource not available")
+            self.skipTest("")
 
         userData = b";admin=true;"
         enc = encrypt_wrapper(userData)
@@ -196,7 +196,7 @@ class TestSet2(unittest.TestCase):
 
     def test_ch16_flip(self):
         if "flip" not in self.tests:
-            self.skipTest("external resource not available")
+            self.skipTest("")
         expected = b"MARSHALL Qg3!"
         temp = encrypt_cbc_fix(b"B" * 16 + b"A" * 48)
 
@@ -206,20 +206,20 @@ class TestSet2(unittest.TestCase):
 
     def test_ch16_flip_exception(self):
         if "flip" not in self.tests:
-            self.skipTest("external resource not available")
+            self.skipTest("")
         self.assertRaises(Exception, flip_bits, b"A" * 32, b"A" * 7, 30)
         self.assertRaises(Exception, flip_bits, b"A" * 32, b"A" * 7, 10)
 
     def test_check_admin(self):
         if "check_admin" not in self.tests:
-            self.skipTest("external resource not available")
+            self.skipTest("")
         data = b";;;;"
         actual = check_admin_helper(data)
         self.assertFalse(actual)
 
     def test_challenge16(self):
         if 16 not in self.tests:
-            self.skipTest("external resource not available")
+            self.skipTest("")
         temp = crack_admin()
         actual = check_admin(temp)
         self.assertTrue(actual)
