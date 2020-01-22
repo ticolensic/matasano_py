@@ -3,6 +3,7 @@ from tco import *
 from ch02 import fixed_xor
 from ch07 import encrypt_aes_128_ecb, decrypt_aes_128_ecb
 from ch09 import pkcs7_pad
+from ch15 import pkcs7_validate
 
 
 @with_continuations()
@@ -19,20 +20,32 @@ def encrypt_cbc(block: bytes, key: bytes, vector: bytes = b'\0' * 16, block_size
 
 
 @with_continuations()
-def decrypt_cbc(block: bytes, key: bytes, vector: bytes = None, block_size: int = 16, self=None) -> bytes:
+def decrypt_cbc(block: bytes, key: bytes, vector: bytes = None, block_size: int = 16,
+                self=None) -> bytes:
     if not block:
         return b""
     if not vector:
         vector = b'\0' * 16
     d = decrypt_aes_128_ecb(block[:block_size], key)
-    left = strip_padding(fixed_xor(d, vector))
-    return left + decrypt_cbc(block[block_size:], key, block[:block_size])
+    left = fixed_xor(d, vector)
+    right = decrypt_cbc(block[block_size:], key, block[:block_size])
+    if not right:
+        left = strip_padding(left)
+    return left + right
 
 
-def strip_padding(data: bytes):
+def strip_padding(data: bytes, bs: int = 16):
+    if len(data) % bs > 0:
+        return data
+    if not pkcs7_validate(data, bs):
+        raise WrongPaddingException("Wrong padding")
     x = b""  # WA for Code Analysis
     for x in range(15, 0, -1):
         test = map(lambda z: z == x, data[-x:])
         if all(test):
             break
     return data.rstrip(bytes([x]))
+
+
+class WrongPaddingException(Exception):
+    pass

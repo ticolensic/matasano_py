@@ -13,12 +13,13 @@ from ch12 import crack_ecb_simple, encryption_oracle_ecb, unknown_string
 from ch13 import kv_parse, check_email, kv_return, encrypt_profile, decrypt_profile, attack_profile
 from ch14 import crack_ecb_hard, encryption_oracle_ecb_hard
 from ch15 import pkcs7_validate
-from ch16 import encrypt_wrapper, check_admin, flip_bits, encrypt_cbc_fix, decrypt_cbc_fix, crack_admin
+from ch16 import encrypt_wrapper, check_admin, flip_bits, encrypt_cbc_fix, decrypt_cbc_fix, crack_admin, \
+    check_admin_helper
 
 
 class TestSet2(unittest.TestCase):
     main = [9, 10, 11, 12, 13, 14, 15, 16]
-    supplementary = ["cbc", "oracle", "kv", "email", "profile", "pre16", "flip"]
+    supplementary = ["cbc", "oracle", "kv", "email", "profile", "pre16", "flip", "check_admin"]
 
     # noinspection PyTypeChecker
     # tests = supplementary
@@ -208,6 +209,13 @@ class TestSet2(unittest.TestCase):
             self.skipTest("external resource not available")
         self.assertRaises(Exception, flip_bits, b"A" * 32, b"A" * 7, 30)
         self.assertRaises(Exception, flip_bits, b"A" * 32, b"A" * 7, 10)
+
+    def test_check_admin(self):
+        if "check_admin" not in self.tests:
+            self.skipTest("external resource not available")
+        data = b";;;;"
+        actual = check_admin_helper(data)
+        self.assertFalse(actual)
 
     def test_challenge16(self):
         if 16 not in self.tests:

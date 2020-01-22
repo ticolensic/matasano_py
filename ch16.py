@@ -7,10 +7,6 @@ iv: bytes = generate_bytes()
 key: bytes = generate_bytes()
 
 
-# iv: bytes = b"\0" * 16
-# key: bytes = b"\0" * 16
-
-
 def encrypt_cbc_fix(data: bytes) -> bytes:
     global key
     global iv
@@ -33,11 +29,14 @@ def encrypt_wrapper(data: bytes) -> bytes:
 
 def check_admin(data: bytes) -> bool:
     dec: bytes = decrypt_cbc_fix(data)
-    d = dict(
-        (x.split(b'=')[0], x.split(b'=')[1])
-        for x in dec.split(b';')
-    )
-    breakdown = defaultdict(lambda: b"false", d)
+    return check_admin_helper(dec)
+
+
+def check_admin_helper(data: bytes) -> bool:
+    breakdown = defaultdict(lambda: b"false", {})
+    for x in data.split(b';'):
+        if x.find(b'=') >= 0:
+            breakdown[x.split(b'=')[0]] = x.split(b'=')[1]
     return breakdown[b"admin"] == b"true"
 
 

@@ -1,8 +1,8 @@
 def pad(data: bytes, width: int, char: bytes) -> bytes:
-    len_data_width = len(data) % width
-    if len_data_width == 0:
-        return data
-    data_width = width - len_data_width
+    # len_data_width = len(data) % width
+    # if len_data_width == 0:
+    #     return data
+    data_width = width - len(data) % width
     data += char * data_width
     return data
 
