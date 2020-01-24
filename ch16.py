@@ -13,10 +13,10 @@ def encrypt_cbc_fix(data: bytes) -> bytes:
     return encrypt_cbc(data, key, iv)
 
 
-def decrypt_cbc_fix(data: bytes) -> bytes:
+def decrypt_cbc_fix(data: bytes, padding: bool = True) -> bytes:
     global key
     global iv
-    return decrypt_cbc(data, key, iv)
+    return decrypt_cbc(data, key, iv, 16, padding)
 
 
 def encrypt_wrapper(data: bytes) -> bytes:
@@ -52,7 +52,7 @@ def flip_bits(enc_data: bytes, target: bytes, offset, block_size: int = 16) -> b
     for i in range(size):
         enc_flipped[prev + i] ^= target[i]
 
-    dec_flipped = decrypt_cbc_fix(bytes(enc_flipped))
+    dec_flipped = decrypt_cbc_fix(bytes(enc_flipped), padding=False)
     result = bytearray(enc_data)
     for i in range(size):
         result[prev + i] ^= dec_flipped[offset + i]

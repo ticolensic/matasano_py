@@ -19,17 +19,17 @@ def encrypt_cbc(block: bytes, key: bytes, vector: bytes = b'\0' * 16, block_size
     return left_res + right_res
 
 
-@with_continuations()
+# @with_continuations()
 def decrypt_cbc(block: bytes, key: bytes, vector: bytes = None, block_size: int = 16,
-                self=None) -> bytes:
+                padding: bool = True, self=None) -> bytes:
     if not block:
         return b""
     if not vector:
         vector = b'\0' * 16
     d = decrypt_aes_128_ecb(block[:block_size], key)
     left = fixed_xor(d, vector)
-    right = decrypt_cbc(block[block_size:], key, block[:block_size])
-    if not right:
+    right = decrypt_cbc(block[block_size:], key, block[:block_size], block_size, padding)
+    if padding and (not right):
         left = strip_padding(left)
     return left + right
 

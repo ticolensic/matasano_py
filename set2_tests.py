@@ -7,7 +7,7 @@ from Crypto.Cipher import AES
 
 from ch01 import Base64, from_base64
 from ch09 import pkcs7_pad
-from ch10 import encrypt_cbc, decrypt_cbc, strip_padding
+from ch10 import encrypt_cbc, decrypt_cbc, strip_padding, WrongPaddingException
 from ch11 import generate_bytes, encryption_oracle_ecb_cbc, ecb_or_cbc
 from ch12 import crack_ecb_simple, encryption_oracle_ecb, unknown_string
 from ch13 import kv_parse, check_email, kv_return, encrypt_profile, decrypt_profile, attack_profile
@@ -201,7 +201,7 @@ class TestSet2(unittest.TestCase):
         temp = encrypt_cbc_fix(b"B" * 16 + b"A" * 48)
 
         flipped = flip_bits(temp, expected, 18)
-        actual = decrypt_cbc_fix(flipped)
+        actual = decrypt_cbc_fix(flipped, padding=False)
         self.assertIn(expected, actual)
 
     def test_ch16_flip_exception(self):
