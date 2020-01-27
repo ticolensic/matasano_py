@@ -63,8 +63,10 @@ def crack_ecb_simple(func: Callable[[bytes], bytes], left_base_size: int = 0) ->
                 x = block[block_size - 1]
                 answer.append(x)
                 break
-    res = strip_padding(bytes(answer))
-    return res
+    if len(answer) % block_size > 0:
+        return bytes(answer)
+    else:
+        return strip_padding(bytes(answer))
 
 
 def round_up(x: int, y: int) -> int:
