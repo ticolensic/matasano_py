@@ -34,10 +34,10 @@ def decrypt_cbc(block: bytes, key: bytes, vector: bytes = None, block_size: int 
     return left + right
 
 
-def strip_padding(data: bytes, bs: int = 16):
+def strip_padding(data: bytes, check_padding: bool = True, bs: int = 16):
     if len(data) % bs > 0:
         raise WrongPaddingException("Uneven padding")
-    if not pkcs7_validate(data, bs):
+    if check_padding and (not pkcs7_validate(data, bs)):
         raise WrongPaddingException("Wrong padding")
     x = b""  # WA for Code Analysis
     for x in range(bs, 0, -1):
